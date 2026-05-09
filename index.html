@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tarea de Memoria Visoespacial con Milo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-top: 0;
+    }
+    .character {
+      width: 200px;
+      height: 200px;
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px auto;
+      width: 80%;
+    }
+    .grid-cell {
+      background-color: #ddd;
+      border-radius: 5px;
+      padding: 20px;
+      font-size: 30px;
+      text-align: center;
+      cursor: pointer;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tarea de Memoria Visoespacial con Milo</h1>
+    
+    <div id="instructions">
+      <p>En cada pantalla verás dos personajes llamados Milo. Observa en qué mano tiene la pelota cada uno y decide si es la misma mano o una mano diferente.</p>
+      <p>Luego, trata de recordar en qué lugar aparece la pelota del Milo de la derecha.</p>
+      <button onclick="startTask()">Comenzar Tarea</button>
+    </div>
+    
+    <div id="task" style="display: none;">
+      <div id="characters"></div>
+      <button onclick="selectHand('same')">Misma Mano</button>
+      <button onclick="selectHand('different')">Mano Diferente</button>
+    </div>
+    
+    <div id="grid" style="display: none;">
+      <p>Haz clic en las celdas de la cuadrícula en el mismo orden en que aparecieron las pelotas del Milo de la derecha.</p>
+      <div class="grid-container"></div>
+      <button onclick="checkGrid()">Comprobar</button>
+    </div>
+    
+    <div id="results" style="display: none;">
+      <h2>Resultados</h2>
+      <p>Aciertos: <span id="score"></span></p>
+      <button onclick="restartTask()">Reiniciar Tarea</button>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let currentStep = 0;
+    let sequence = [];
+    let userSequence = [];
+    
+    // Función para comenzar la tarea
+    function startTask() {
+      document.getElementById("instructions").style.display = "none";
+      document.getElementById("task").style.display = "block";
+      nextStep();
+    }
+    
+    // Función para mostrar el siguiente paso de la tarea
+    function nextStep() {
+      if (currentStep < 5) {
+        showCharacters();
+      } else {
+        document.getElementById("task").style.display = "none";
+        document.getElementById("grid").style.display = "block";
+        createGrid();
+      }
+    }
+    
+    // Función para mostrar los personajes Milo
+    function showCharacters() {
+      const characters = document.getElementById("characters");
+      characters.innerHTML = "";
+      
+      const leftHand = Math.random() < 0.5 ? "left" : "right";
+      const rightHand = Math.random() < 0.5 ? "left" : "right";
+      
+      const leftCharacter = document.createElement("div");
+      leftCharacter.className = "character";
+      leftCharacter.style.backgroundImage = `url('milo-${leftHand}.png')`;
+      characters.appendChild(leftCharacter);
+      
+      const rightCharacter = document.createElement("div");
+      rightCharacter.className = "character";
+      rightCharacter.style.backgroundImage = `url('milo-${rightHand}.png')`;
+      characters.appendChild(rightCharacter);
+      
+      sequence.push(rightHand);
+    }
+    
+    // Función para seleccionar la mano
+    function selectHand(choice) {
+      currentStep++;
+      nextStep();
+    }
+    
+    // Función para crear la cuadrícula
+    function createGrid() {
+      const gridContainer = document.querySelector(".grid-container");
+      gridContainer.innerHTML = "";
+      
+      for (let i = 0; i < 16; i++) {
+        const cell = document.createElement("div");
+        cell.className = "grid-cell";
+        cell.addEventListener("click", function() {
+          cell.textContent = userSequence.length + 1;
+          userSequence.push(i);
+        });
+        gridContainer.appendChild(cell);
+      }
+    }
+    
+    // Función para comprobar la secuencia en la cuadrícula
+    function checkGrid() {
+      let score = 0;
+      for (let i = 0; i < sequence.length; i++) {
+        if (sequence[i] === "left" && userSequence[i] % 4 === 0 ||
+            sequence[i] === "right" && userSequence[i] % 4 === 3) {
+          score++;
+        }
+      }
+      document.getElementById("grid").style.display = "none";
+      document.getElementById("results").style.display = "block";
+      document.getElementById("score").textContent = score + " de " + sequence.length;
+    }
+    
+    // Función para reiniciar la tarea
+    function restartTask() {
+      currentStep = 0;
+      sequence = [];
+      userSequence = [];
+      document.getElementById("results").style.display = "none";
+      document.getElementById("instructions").style.display = "block";
+    }
+  </script>
+</body>
+</html>
