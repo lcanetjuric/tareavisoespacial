@@ -108,17 +108,21 @@
       const characters = document.getElementById("characters");
       characters.innerHTML = "";
       
-      const leftHand = Math.random() < 0.5 ? "left" : "right";
-      const rightHand = Math.random() < 0.5 ? "left" : "right";
+      const orientations = ["frente", "perfil_izquierdo", "perfil_derecho", "espalda"];
+      const leftHand = Math.random() < 0.5 ? "izquierda" : "derecha";
+      const rightHand = Math.random() < 0.5 ? "izquierda" : "derecha";
+      
+      const leftOrientation = orientations[Math.floor(Math.random() * orientations.length)];
+      const rightOrientation = orientations[Math.floor(Math.random() * orientations.length)];
       
       const leftCharacter = document.createElement("div");
       leftCharacter.className = "character";
-      leftCharacter.style.backgroundImage = `url('milo-${leftHand}.png')`;
+      leftCharacter.style.backgroundImage = `url('img/milo-${leftOrientation}-${leftHand}.png')`;
       characters.appendChild(leftCharacter);
       
       const rightCharacter = document.createElement("div");
       rightCharacter.className = "character";
-      rightCharacter.style.backgroundImage = `url('milo-${rightHand}.png')`;
+      rightCharacter.style.backgroundImage = `url('img/milo-${rightOrientation}-${rightHand}.png')`;
       characters.appendChild(rightCharacter);
       
       sequence.push(rightHand);
@@ -150,8 +154,8 @@
     function checkGrid() {
       let score = 0;
       for (let i = 0; i < sequence.length; i++) {
-        if (sequence[i] === "left" && userSequence[i] % 4 === 0 ||
-            sequence[i] === "right" && userSequence[i] % 4 === 3) {
+        if (sequence[i] === "izquierda" && userSequence[i] % 4 === 0 ||
+            sequence[i] === "derecha" && userSequence[i] % 4 === 3) {
           score++;
         }
       }
